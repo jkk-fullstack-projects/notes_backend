@@ -1,11 +1,14 @@
-const express = require('express')
-const cors = require('cors')
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
 
-const app = express()
+const app = express();
 
-app.use(express.json())
-app.use(cors())
-app.use(express.static('dist'))
+app.use(express.json());
+app.use(cors());
+app.use(express.static('dist'));
+
+const note = require('./models/note.js');
 
 let notes = [
   {
@@ -41,8 +44,11 @@ app.get('/api/notes/:id', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-    response.json(notes)
-})
+  note.find({})
+  .then(notes => {
+    response.json(notes);
+  });
+});
 
 const generateId = () => {
   const maxId = notes.length > 0 
@@ -59,18 +65,18 @@ app.post('/api/notes', (request, response) => {
     return response.status(400).json({
       error: 'content missing'
     })
-  }
+  };
 
   const note = {
     content: body.content,
     important: body.important || false,
     id: generateId(),
-  }
+  };
 
-  notes = notes.concat(note)
+  notes = notes.concat(note);
 
-  response.json(note)
-})
+  response.json(note);
+});
 
 app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -79,7 +85,7 @@ app.delete('/api/notes/:id', (request, response) => {
     response.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
