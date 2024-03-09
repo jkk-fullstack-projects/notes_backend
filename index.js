@@ -48,7 +48,7 @@ app.get('/api/notes/:id', (request, response) => {
 });
 
 app.get('/api/notes', (request, response) => {
-  note.find({})
+  Note.find({})
   .then(notes => {
     response.json(notes);
   });
